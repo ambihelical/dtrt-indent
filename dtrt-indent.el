@@ -194,13 +194,18 @@ adjusted transparently."
   :lighter " dtrt-indent"
   :group 'dtrt-indent
   (if dtrt-indent-mode
-      (if (and (featurep 'smie) (not (eq smie-grammar 'unset)))
-          (progn
-            (when (null smie-config--buffer-local) (smie-config-guess))
-            (when dtrt-indent-run-after-smie
-              (dtrt-indent-try-set-offset)))
-        (dtrt-indent-try-set-offset))
+      (dtrt-indent--setup-mode)
     (dtrt-indent-undo)))
+
+(defun dtrt-indent--setup-mode ()
+  "Processing to be done after local variables have been processed"
+  (hack-local-variables)
+  (if (and (featurep 'smie) (not (eq smie-grammar 'unset)))
+      (progn
+        (when (null smie-config--buffer-local) (smie-config-guess))
+        (when dtrt-indent-run-after-smie
+          (dtrt-indent-try-set-offset)))
+    (dtrt-indent-try-set-offset)))
 
 ;;;###autoload
 (define-globalized-minor-mode dtrt-indent-global-mode dtrt-indent-mode
